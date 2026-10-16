@@ -1,0 +1,357 @@
+# Informe de calidad: BiblioTech
+
+## Integrantes
+
+| Nombre | Usuario de GitHub |
+|---|---|
+| | |
+| | |
+
+## Parte 1. Línea base
+
+Resultado de cada herramienta ANTES de hacer cambios.
+
+| Herramienta | Comando | Resultado (copiar la línea de resumen) |
+|---|---|---|
+| pytest | `python -m pytest -v` | | 
+|Resualtado|
+================================================== test session starts =========================================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 19 items                                                                                                                                                                            
+tests/test_catalogo.py::test_isbn_con_guiones_es_valido PASSED                                                                                                                          [  5%]
+tests/test_catalogo.py::test_isbn_chileno_es_valido PASSED                                                                                                                              [ 10%]
+tests/test_catalogo.py::test_isbn_sin_guiones_es_valido PASSED                                                                                                                          [ 15%]
+tests/test_catalogo.py::test_isbn_con_verificador_cero_es_valido FAILED                                                                                                                 [ 21%]
+tests/test_catalogo.py::test_isbn_sin_guiones_con_verificador_cero_es_valido FAILED                                                                                                     [ 26%]
+tests/test_catalogo.py::test_isbn_con_verificador_incorrecto_es_invalido PASSED                                                                                                         [ 31%]
+tests/test_catalogo.py::test_isbn_de_12_digitos_es_invalido PASSED                                                                                                                      [ 36%]
+tests/test_catalogo.py::test_isbn_con_letras_es_invalido PASSED                                                                                                                         [ 42%]
+tests/test_catalogo.py::test_texto_vacio_es_invalido PASSED                                                                                                                             [ 47%]
+tests/test_devolucion.py::test_estudiante_devuelve_en_7_dias FAILED                                                                                                                     [ 52%]
+tests/test_devolucion.py::test_docente_devuelve_en_14_dias FAILED                                                                                                                       [ 57%]
+tests/test_multas.py::test_estudiante_con_3_dias_de_atraso_paga_1500 PASSED                                                                                                             [ 63%]
+tests/test_multas.py::test_multa_alta_queda_en_el_tope PASSED                                                                                                                           [ 68%]
+tests/test_multas.py::test_docente_con_5_dias_paga_solo_3 PASSED                                                                                                                        [ 73%]
+tests/test_usuarios.py::test_registrar_y_buscar_usuario PASSED                                                                                                                          [ 78%]
+tests/test_usuarios.py::test_buscar_usuario_inexistente_devuelve_none PASSED                                                                                                            [ 84%]
+tests/test_usuarios.py::test_autenticar_con_clave_correcta PASSED                                                                                                                       [ 89%]
+tests/test_usuarios.py::test_autenticar_con_clave_incorrecta PASSED                                                                                                                     [ 94%]
+tests/test_usuarios.py::test_token_tiene_32_caracteres_y_no_se_repite PASSED                                                                                                            [100%]
+=============================================== FAILURE==========================================================
+============================================= short test summary info ==================================================
+FAILED tests/test_catalogo.py::test_isbn_con_verificador_cero_es_valido - AssertionError: assert False is True
+FAILED tests/test_catalogo.py::test_isbn_sin_guiones_con_verificador_cero_es_valido - AssertionError: assert False is True
+FAILED tests/test_devolucion.py::test_estudiante_devuelve_en_7_dias - NotImplementedError: Parte 2C: implementa calcular_fecha_devolucion()
+FAILED tests/test_devolucion.py::test_docente_devuelve_en_14_dias - NotImplementedError: Parte 2C: implementa calcular_fecha_devolucion()
+=========================================== 4 failed, 15 passed in 0.38s ===============================================
+
+| Flake8 | `python -m flake8 --count` | |
+|Resualtado|
+.\bibliotech\prestamos.py:2:1: F401 'os' imported but unused
+.\bibliotech\prestamos.py:44:48: E251 unexpected spaces around keyword / parameter equals
+.\bibliotech\prestamos.py:44:50: E251 unexpected spaces around keyword / parameter equals
+.\bibliotech\prestamos.py:48:21: E711 comparison to None should be 'if cond is None:'
+.\bibliotech\prestamos.py:50:101: E501 line too long (117 > 100 characters)
+.\bibliotech\reportes.py:4:1: F401 'sys' imported but unused
+.\bibliotech\reportes.py:25:13: F841 local variable 'total' is assigned to but never used
+.\bibliotech\reportes.py:27:5: E722 do not use bare 'except'
+.\bibliotech\usuarios.py:25:101: E501 line too long (101 > 100 characters)
+
+| Bandit | `python -m bandit -r bibliotech` | Alta: · Media: · Baja: |
+|Resualtado|
+[main]  INFO    profile include tests: None
+[main]  INFO    profile exclude tests: None
+[main]  INFO    cli include tests: None
+[main]  INFO    cli exclude tests: None
+[main]  INFO    running on Python 3.12.10
+Run started:2026-10-16 22:24:22.476618+00:00
+
+Test results:
+>> Issue: [B701:jinja2_autoescape_false] By default, jinja2 sets autoescape to False. Consider using autoescape=True or use the select_autoescape function to mitigate XSS vulnerabilities.
+   Severity: High   Confidence: High
+   CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b701_jinja2_autoescape_false.html
+   Location: bibliotech\notificaciones.py:12:14
+11      def armar_mensaje(nombre, titulo, fecha):
+12          entorno = Environment()
+13          return entorno.from_string(PLANTILLA).render(nombre=nombre, titulo=titulo, fecha=fecha)
+
+--------------------------------------------------
+>> Issue: [B113:request_without_timeout] Call to requests without timeout
+   Severity: Medium   Confidence: Low
+   CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b113_request_without_timeout.html
+   Location: bibliotech\notificaciones.py:17:16
+16      def enviar_aviso(url_webhook, mensaje):
+17          respuesta = requests.post(url_webhook, json={"texto": mensaje})
+18          return respuesta.status_code == 200
+
+--------------------------------------------------
+>> Issue: [B307:blacklist] Use of possibly insecure function - consider using safer ast.literal_eval.
+   Severity: Medium   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b307-eval
+   Location: bibliotech\reportes.py:12:11
+11          """
+12          return eval(formula, {}, datos)
+13
+
+--------------------------------------------------
+>> Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+   Severity: High   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b605_start_process_with_a_shell.html
+   Location: bibliotech\reportes.py:17:4
+16          """Copia la base de datos a la carpeta de respaldos."""
+17          os.system("cp biblioteca.db respaldos/" + nombre_archivo)
+18
+
+--------------------------------------------------
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html
+   Location: bibliotech\usuarios.py:20:11
+19      def _hash_clave(clave):
+20          return hashlib.md5(clave.encode()).hexdigest()
+21
+
+--------------------------------------------------
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Low
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html
+   Location: bibliotech\usuarios.py:25:17
+24          """Registra un usuario nuevo guardando su clave como hash."""
+25          consulta = f"INSERT INTO usuarios VALUES ('{rut}', '{nombre}', '{_hash_clave(clave)}', '{tipo}')"
+26          conexion.execute(consulta)
+
+--------------------------------------------------
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Low
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html
+   Location: bibliotech\usuarios.py:32:15
+31          """Devuelve (rut, nombre, tipo) del usuario, o None si no existe."""
+32          consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = '" + rut + "'"
+33          return conexion.execute(consulta).fetchone()
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random
+   Location: bibliotech\usuarios.py:49:19
+48          letras = "abcdefghijklmnopqrstuvwxyz0123456789"
+49          return "".join(random.choice(letras) for _ in range(32))
+
+--------------------------------------------------
+
+Code scanned:
+        Total lines of code: 132
+        Total lines skipped (#nosec): 0
+
+Run metrics:
+        Total issues (by severity):
+                Undefined: 0
+                Low: 1
+                Medium: 4
+                High: 3
+        Total issues (by confidence):
+                Undefined: 0
+                Low: 3
+                Medium: 0
+                High: 5
+Files skipped (0):
+
+| pip-audit | `python -m pip_audit -r requirements.txt --no-deps --disable-pip` | |
+|Resultado|
+WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies
+WARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes
+Found 36 known vulnerabilities in 3 packages
+Name     Version ID              Fix Versions
+-------- ------- --------------- -------------
+requests 2.25.1  PYSEC-2023-74   2.31.0
+requests 2.25.1  PYSEC-2023-74   2.31.0
+requests 2.25.1  PYSEC-2026-1873 2.32.0
+requests 2.25.1  PYSEC-2026-1872 2.32.4
+requests 2.25.1  PYSEC-2026-2275 2.33.0
+requests 2.25.1  PYSEC-2026-1873 2.32.0
+requests 2.25.1  PYSEC-2026-1872 2.32.4
+requests 2.25.1  PYSEC-2026-2275 2.33.0
+urllib3  1.26.5  PYSEC-2026-1995 1.26.19,2.2.2
+urllib3  1.26.5  PYSEC-2023-192  1.26.17,2.0.6
+urllib3  1.26.5  PYSEC-2023-192  1.26.17,2.0.6
+urllib3  1.26.5  PYSEC-2023-212  1.26.18,2.0.7
+urllib3  1.26.5  PYSEC-2023-212  1.26.18,2.0.7
+urllib3  1.26.5  PYSEC-2026-1999 2.5.0
+urllib3  1.26.5  PYSEC-2026-1998 2.6.0
+urllib3  1.26.5  PYSEC-2026-1994 2.6.0
+urllib3  1.26.5  PYSEC-2026-1996 2.6.3
+urllib3  1.26.5  PYSEC-2026-141  2.7.0
+urllib3  1.26.5  PYSEC-2026-141  2.7.0
+urllib3  1.26.5  PYSEC-2026-1999 2.5.0
+urllib3  1.26.5  PYSEC-2026-1998 2.6.0
+urllib3  1.26.5  PYSEC-2026-1995 1.26.19,2.2.2
+urllib3  1.26.5  PYSEC-2026-1994 2.6.0
+urllib3  1.26.5  PYSEC-2026-1996 2.6.3
+urllib3  1.26.5  PYSEC-2026-4177 2.8.0
+urllib3  1.26.5  PYSEC-2026-4175 2.8.0
+jinja2   2.11.2  PYSEC-2021-66   2.11.3
+jinja2   2.11.2  PYSEC-2021-66   2.11.3
+jinja2   2.11.2  PYSEC-2026-1473 3.1.3
+jinja2   2.11.2  PYSEC-2026-1474 3.1.4
+jinja2   2.11.2  PYSEC-2026-1475 3.1.5
+jinja2   2.11.2  PYSEC-2026-1471 3.1.6
+jinja2   2.11.2  PYSEC-2026-1473 3.1.3
+jinja2   2.11.2  PYSEC-2026-1471 3.1.6
+jinja2   2.11.2  PYSEC-2026-1474 3.1.4
+jinja2   2.11.2  PYSEC-2026-1475 3.1.5
+
+
+## Parte 2. Pruebas unitarias
+
+### Defectos encontrados
+
+| Función | Prueba que lo evidencia | Causa del defecto | Corrección aplicada |
+|catalogo.py| python -m pytest tests/test_catalogo.py -v|
+|Causa del defecto|
+================================================ FAILURES ==========================================
+__________________________________________________________________________ test_isbn_con_verificador_cero_es_valido __________________________________________________________________________
+
+    def test_isbn_con_verificador_cero_es_valido():
+>       assert validar_isbn13("978-956-00-0004-0") is True
+E       AssertionError: assert False is True
+E        +  where False = validar_isbn13('978-956-00-0004-0')
+
+tests\test_catalogo.py:20: AssertionError
+____________________________________________________________________ test_isbn_sin_guiones_con_verificador_cero_es_valido ____________________________________________________________________
+
+    def test_isbn_sin_guiones_con_verificador_cero_es_valido():
+>       assert validar_isbn13("9789560000200") is True
+E       AssertionError: assert False is True
+E        +  where False = validar_isbn13('9789560000200')
+
+tests\test_catalogo.py:24: AssertionError
+============================================================================================================
+|Correccion aplicada|
+Motivo: Si suma % 10 resultaba en 0 (por ejemplo, suma = 100), la fórmula anterior calculaba 10 - 0 = 10. Al comparar 10 con el 13.º dígito (que siempre es un carácter individual de 0 a 9), la validación fallaba. Agregar el módulo % 10 final convierte el 10 en 0 automáticamente, mientras que cualquier otro número entre 1 y 9 se mantiene igual (ejemplo: 8 % 10 = 8).
+
+PS C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech> python -m pytest tests/test_catalogo.py -v
+============================================ test session starts ===============================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 9 items                                                                                                                                                                       
+
+tests/test_catalogo.py::test_isbn_con_guiones_es_valido PASSED                                                                                                                    [ 11%]
+tests/test_catalogo.py::test_isbn_chileno_es_valido PASSED                                                                                                                        [ 22%]
+tests/test_catalogo.py::test_isbn_sin_guiones_es_valido PASSED                                                                                                                    [ 33%]
+tests/test_catalogo.py::test_isbn_con_verificador_cero_es_valido PASSED                                                                                                           [ 44%]
+tests/test_catalogo.py::test_isbn_sin_guiones_con_verificador_cero_es_valido PASSED                                                                                               [ 55%]
+tests/test_catalogo.py::test_isbn_con_verificador_incorrecto_es_invalido PASSED                                                                                                   [ 66%]
+tests/test_catalogo.py::test_isbn_de_12_digitos_es_invalido PASSED                                                                                                                [ 77%]
+tests/test_catalogo.py::test_isbn_con_letras_es_invalido PASSED                                                                                                                   [ 88%]
+tests/test_catalogo.py::test_texto_vacio_es_invalido PASSED                                                                                                                       [100%]
+
+============================================== 9 passed in 0.08s ==========================================
+
+### Pruebas agregadas
+
+| Archivo | Nombre de la prueba | Qué caso o valor límite cubre |
+|test_catalogo.py||---|
+| | | |
+
+Resultado final de `python -m pytest -v`:
+
+## Parte 3. Análisis estático (Flake8)
+
+| Código | Archivo:línea | Qué significa | Cómo lo corrigieron |
+|---|---|---|---|
+| | | | |
+
+Resultado final de `python -m flake8 --count`:
+
+## Parte 4. Análisis de seguridad
+
+### 4A. Bandit
+
+| ID | Severidad / Confianza | Archivo:línea | Riesgo concreto en BiblioTech | Corrección aplicada |
+|---|---|---|---|---|
+| | | | | |
+
+Pruebas de seguridad agregadas (nombre y qué demuestran):
+
+### 4B. pip-audit
+
+| Paquete | Versión original | N° de vulnerabilidades | Versión actualizada |
+|---|---|---|---|
+| | | | |
+
+### 4C. Revisión manual
+
+Problema de seguridad que las herramientas NO reportaron, dónde está, por qué es un riesgo y cómo lo corrigieron:
+
+## Parte 5. Pruebas de carga y estrés
+
+Criterio de aceptación: con 30 usuarios simultáneos, el 95% de las búsquedas responde en menos de 500 ms y no hay errores.
+
+### 5A. Línea base (antes de corregir)
+
+| Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
+|---:|---:|---:|---:|:---:|
+| 10 | | | | |
+| 30 | | | | |
+| 60 | | | | |
+
+### 5B. Diagnóstico y corrección
+
+¿Qué observaron en las peticiones por segundo al aumentar los usuarios? ¿Qué línea de `carga/servidor.py` causaba el problema y por qué? ¿Cómo lo corrigieron?
+
+| Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
+|---:|---:|---:|---:|:---:|
+| 30 (después de corregir) | | | | |
+
+### 5C. Prueba de estrés
+
+| Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
+|---:|---:|---:|---:|:---:|
+| 100 | | | | |
+| 300 | | | | |
+| 500 | | | | |
+| 10 (después del estrés) | | | | |
+
+Punto de quiebre, cómo falla el sistema (lentitud o errores 503) y si se recupera:
+
+## Parte 6. Pipeline de calidad
+
+Enlace a la ejecución en verde de GitHub Actions:
+
+## Parte 7. Análisis
+
+### 7.1 Análisis estático y dinámico
+Diferencien análisis estático y dinámico. Clasifiquen las cuatro herramientas usadas y den un defecto de este examen que solo podía encontrarse con cada tipo de análisis.
+
+### 7.2 Pruebas de regresión
+¿Qué es una prueba de regresión? Indiquen qué pruebas cumplieron ese rol durante la Parte 4 y qué habría pasado sin ellas.
+
+### 7.3 Pruebas de integración, carga y estrés
+a) Propongan una prueba de integración para BiblioTech: qué módulos probarían juntos, con qué herramienta y con qué criterio de aceptación medible.
+b) Con los resultados de su Parte 5, expliquen la diferencia entre la prueba de carga y la prueba de estrés que ejecutaron. ¿Por qué el defecto del servidor no podía detectarse con pruebas unitarias? Con sus números, ¿qué le recomendarían a la biblioteca para el inicio de semestre?
+
+### 7.4 Evaluación de herramientas
+
+| Herramienta | Qué detecta | Etapa del ciclo de vida / del pipeline donde actúa | Qué NO detecta (limitación) | Costo de no usarla |
+|---|---|---|---|---|
+| pytest | | | | |
+| Flake8 | | | | |
+| Bandit | | | | |
+| pip-audit | | | | |
+| Prueba de carga (`prueba_carga.py`) | | | | |
+
+### 7.5 Recomendación
+Si el equipo de BiblioTech solo pudiera mantener dos puertas de calidad en su pipeline, ¿cuáles elegirían y en qué orden? Justifiquen con los conceptos de detección temprana y mejora continua.

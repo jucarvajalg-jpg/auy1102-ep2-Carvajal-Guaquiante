@@ -1,0 +1,19 @@
+# Pipeline de calidad de BiblioTech.
+# Se ejecuta en cada push. Hoy solo corre las pruebas unitarias.
+# PARTE 5: agreguen las puertas de análisis estático, seguridad y dependencias.
+name: Calidad BiblioTech
+
+on: [push, pull_request]
+
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar herramientas
+        run: pip install -r requirements-dev.txt
+      - name: Pruebas unitarias
+        run: python -m pytest -v
