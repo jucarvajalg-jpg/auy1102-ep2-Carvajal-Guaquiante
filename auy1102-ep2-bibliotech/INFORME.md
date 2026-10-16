@@ -214,7 +214,7 @@ jinja2   2.11.2  PYSEC-2026-1475 3.1.5
 
 ## Parte 2. Pruebas unitarias
 
-### Defectos encontrados
+### Defectos encontrados catalogo.py
 
 | Función | Prueba que lo evidencia | Causa del defecto | Corrección aplicada |
 |catalogo.py| python -m pytest tests/test_catalogo.py -v|
@@ -260,14 +260,135 @@ tests/test_catalogo.py::test_texto_vacio_es_invalido PASSED                     
 
 ============================================== 9 passed in 0.08s ==========================================
 
+
+| Función | Prueba que lo evidencia | Causa del defecto | Corrección aplicada |
+|test_multas.py| python -m pytest tests/test_multas.py -v|
+|Resultado|
+PS C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech> python -m pytest tests/test_multas.py  -v
+============================================ test session starts =======================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 3 items                                                                                                                                                                       
+tests/test_multas.py::test_estudiante_con_3_dias_de_atraso_paga_1500 PASSED                                                                                                       [ 33%]
+tests/test_multas.py::test_multa_alta_queda_en_el_tope PASSED                                                                                                                     [ 66%]
+tests/test_multas.py::test_docente_con_5_dias_paga_solo_3 PASSED                                                                                                                  [100%]
+### Defectos encontrados teste_multas.py
+
+| Función | Prueba que lo evidencia | Causa del defecto | Corrección aplicada |
+|test_multas.py| python -m pytest tests/test_multas.py -v| No comunica errores
+|resultado|
+PS C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech> python -m pytest tests/test_multas.py  -v
+=========================================== test session starts =========================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 3 items                                                                                                                                                                       
+tests/test_multas.py::test_estudiante_con_3_dias_de_atraso_paga_1500 PASSED                                                                                                       [ 33%]
+tests/test_multas.py::test_multa_alta_queda_en_el_tope PASSED                                                                                                                     [ 66%]
+tests/test_multas.py::test_docente_con_5_dias_paga_solo_3 PASSED                                                                                                                  [100%]
+
+========================================== 3 passed in 0.03s ==================================================
 ### Pruebas agregadas
 
 | Archivo | Nombre de la prueba | Qué caso o valor límite cubre |
-|test_catalogo.py||---|
-| | | |
+|test_multas.py|def test_dias_atraso_negativos_lanza_value_error():|Valida que una cantidad negativa de días de atraso lance ValueError.|
+|test_multas.py|def test_sin_atraso_paga_cero():Valida que con 0 días de atraso la multa sea $0.|
+|test_multas.py|def test_docente_dentro_del_periodo_de_gracia_paga_cero():|Valida que un docente con 1 o 2 días de atraso pague $0 y no montos negativos.|
+|test_multas.py|def test_tope_multa_exacto_para_docente():|Valida que la multa máxima de $10.000 se aplique correctamente al docente tras la gracia.|
+Resultado final de `pytest tests/test_multas.py -v`:
+========================================== test session starts ============================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 7 items                                                                                                                                                                       
+tests/test_multas.py::test_estudiante_con_3_dias_de_atraso_paga_1500 PASSED                                                                                                       [ 14%]
+tests/test_multas.py::test_multa_alta_queda_en_el_tope PASSED                                                                                                                     [ 28%]
+tests/test_multas.py::test_docente_con_5_dias_paga_solo_3 PASSED                                                                                                                  [ 42%]
+tests/test_multas.py::test_dias_atraso_negativos_lanza_value_error FAILED                                                                                                         [ 57%]
+tests/test_multas.py::test_sin_atraso_paga_cero FAILED                                                                                                                            [ 71%]
+tests/test_multas.py::test_docente_dentro_del_periodo_de_gracia_paga_cero FAILED                                                                                                  [ 85%]
+tests/test_multas.py::test_tope_multa_exacto_para_docente PASSED                                                                                                                  [100%]
+================================================= FAILURES ======================================================
+_________________________________________ test_dias_atraso_negativos_lanza_value_error _______________________________________
 
-Resultado final de `python -m pytest -v`:
+    def test_dias_atraso_negativos_lanza_value_error():
+        """Valida que una cantidad negativa de días de atraso lance ValueError."""
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
 
+tests\test_multas.py:26: Failed
+____________________________________ test_sin_atraso_paga_cero ___________________________________________
+
+    def test_sin_atraso_paga_cero():
+        """Valida que con 0 días de atraso la multa sea $0."""
+        assert calcular_multa(0, "estudiante") == 0
+>       assert calcular_multa(0, "docente") == 0
+E       AssertionError: assert -1000 == 0
+E        +  where -1000 = calcular_multa(0, 'docente')
+
+tests\test_multas.py:36: AssertionError
+___________________________________ test_docente_dentro_del_periodo_de_gracia_paga_cero ______________________________________
+
+    def test_docente_dentro_del_periodo_de_gracia_paga_cero():
+        """Valida que un docente con 1 o 2 días de atraso pague $0 y no montos negativos."""
+>       assert calcular_multa(1, "docente") == 0
+E       AssertionError: assert -500 == 0
+E        +  where -500 = calcular_multa(1, 'docente')
+
+tests\test_multas.py:41: AssertionError
+======================================= short test summary info =========================================
+FAILED tests/test_multas.py::test_dias_atraso_negativos_lanza_value_error - Failed: DID NOT RAISE ValueError
+FAILED tests/test_multas.py::test_sin_atraso_paga_cero - AssertionError: assert -1000 == 0
+FAILED tests/test_multas.py::test_docente_dentro_del_periodo_de_gracia_paga_cero - AssertionError: assert -500 == 0
+======================================== 3 failed, 4 passed in 0.21s =========================================
+
+|codigo corregido|
+=========================================== test session starts ==========================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 7 items                                                                                                                                                                       
+
+tests/test_multas.py::test_estudiante_con_3_dias_de_atraso_paga_1500 PASSED                                                                                                       [ 14%]
+tests/test_multas.py::test_multa_alta_queda_en_el_tope PASSED                                                                                                                     [ 28%]
+tests/test_multas.py::test_docente_con_5_dias_paga_solo_3 PASSED                                                                                                                  [ 42%]
+tests/test_multas.py::test_dias_atraso_negativos_lanza_value_error PASSED                                                                                                         [ 57%]
+tests/test_multas.py::test_sin_atraso_paga_cero PASSED                                                                                                                            [ 71%]
+tests/test_multas.py::test_docente_dentro_del_periodo_de_gracia_paga_cero PASSED                                                                                                  [ 85%]
+tests/test_multas.py::test_tope_multa_exacto_para_docente PASSED                                                                                                                  [100%]
+
+=========================================== 7 passed in 0.04s ===========================================
+
+### Defectos encontrados teste_devoluciones.py
+
+| Archivo | Nombre de la prueba | Qué caso o valor límite cubre |
+|test_devoluciones.py|def test_devolucion_que_cae_sabado_se_mueve_al_lunes():|Sábado 3 de octubre de 2026 + 7 días = Sábado 10 de octubre -> se mueve al Lunes 12|
+|test_devoluciones.py|def test_devolucion_que_cae_domingo_se_mueve_al_lunes():|Domingo 4 de octubre de 2026 + 7 días = Domingo 11 de octubre -> se mueve al Lunes 12|
+|test_devoluciones.py|def test_docente_devolucion_que_cae_fin_de_semana_se_mueve_al_lunes():|Sábado 10 de octubre de 2026 + 14 días = Sábado 24 de octubre -> se mueve al Lunes 26|
+|test_devoluciones.py|def test_tipo_usuario_invalido_lanza_value_error():|Cualquier tipo distinto de 'estudiante' o 'docente' debe lanzar ValueError|
+Resultado final de `pytest tests/devoluciones.py -v`:
+PS C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech> pytest tests/test_devolucion.py -v
+========================================= test session starts =========================================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\jpmot\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\jpmot\Documents\Evaluacion_parcial_2\auy1102-ep2-bibliotech
+plugins: platformdirs-4.13.3
+collected 6 items                                                                                                                                                                       
+
+tests/test_devolucion.py::test_estudiante_devuelve_en_7_dias PASSED                                                                                                               [ 16%]
+tests/test_devolucion.py::test_docente_devuelve_en_14_dias PASSED                                                                                                                 [ 33%]
+tests/test_devolucion.py::test_devolucion_que_cae_sabado_se_mueve_al_lunes PASSED                                                                                                 [ 50%]
+tests/test_devolucion.py::test_devolucion_que_cae_domingo_se_mueve_al_lunes PASSED                                                                                                [ 66%]
+tests/test_devolucion.py::test_docente_devolucion_que_cae_fin_de_semana_se_mueve_al_lunes PASSED                                                                                  [ 83%]
+tests/test_devolucion.py::test_tipo_usuario_invalido_lanza_value_error PASSED                                                                                                     [100%]
+
+============================================= 6 passed in 0.09s ========================================
 ## Parte 3. Análisis estático (Flake8)
 
 | Código | Archivo:línea | Qué significa | Cómo lo corrigieron |
