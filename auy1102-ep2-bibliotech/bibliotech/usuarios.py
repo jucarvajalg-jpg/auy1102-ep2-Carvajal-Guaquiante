@@ -20,8 +20,8 @@ def conectar(ruta=":memory:"):
     return conexion
 
 
-def crear_tabla_usuarios(conexion):
-    """Crea la tabla de usuarios en la base de datos si no existe."""
+def crear_tabla(conexion):
+    """Crea la tabla de usuarios en la base de datos."""
     conexion.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             rut TEXT PRIMARY KEY,
@@ -33,9 +33,9 @@ def crear_tabla_usuarios(conexion):
     conexion.commit()
 
 
-def crear_tabla(conexion):
-    """Alias compatible para la creación de tablas."""
-    crear_tabla_usuarios(conexion)
+def crear_tabla_usuarios(conexion):
+    """Alias compatible para la creación de la tabla de usuarios."""
+    crear_tabla(conexion)
 
 
 def registrar_usuario(conexion, rut, nombre, clave, tipo):
