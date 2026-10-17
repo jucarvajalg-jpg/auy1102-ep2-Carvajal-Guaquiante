@@ -38,7 +38,7 @@ def crear_tabla_usuarios(conexion):
     crear_tabla(conexion)
 
 
-def registrar_usuario(conexion, rut, nombre, clave, tipo):
+def registrar_usuario(conexion, rut, nombre, clave, tipo="estudiante"):
     """Registra un usuario nuevo guardando su clave como hash seguro."""
     consulta = "INSERT INTO usuarios VALUES (?, ?, ?, ?)"
     conexion.execute(
@@ -65,10 +65,10 @@ def autenticar(conexion, rut, clave):
 
 
 def generar_token_recuperacion():
-    """Genera un token aleatorio seguro criptográficamente para recuperación."""
+    """Genera un token aleatorio seguro para recuperación."""
     return secrets.token_hex(16)
 
 
 def generar_token_sesion():
-    """Genera un token aleatorio seguro criptográficamente para la sesión."""
+    """Genera un token aleatorio seguro para la sesión."""
     return secrets.token_hex(16)
