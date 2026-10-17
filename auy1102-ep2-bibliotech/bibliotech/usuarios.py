@@ -53,10 +53,21 @@ def registrar_usuario(conexion, rut, nombre, clave, tipo="estudiante"):
     conexion.commit()
 
 
+
 def obtener_usuario(conexion, rut):
     """Devuelve (rut, nombre, tipo) del usuario, o None si no existe."""
-    consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = ?"
-    return conexion.execute(consulta, (rut,)).fetchone()
+    consulta = """
+        SELECT rut, nombre, tipo
+        FROM usuarios
+        WHERE rut = ?
+    """
+    resultado = conexion.execute(consulta, (rut,)).fetchone()
+
+    if resultado is None:
+        return None
+
+    return tuple(resultado)
+
 
 
 def buscar_usuario(conexion, rut):
