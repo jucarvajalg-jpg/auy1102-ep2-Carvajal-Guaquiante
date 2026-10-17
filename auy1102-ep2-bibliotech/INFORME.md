@@ -443,12 +443,31 @@ Con la corrección: La consulta parametrizada escapa el carácter especial de ma
 ### 4B. pip-audit
 
 | Paquete | Versión original | N° de vulnerabilidades | Versión actualizada |
-|---|---|---|---|
+|requests|2.25.1|8|2.33.0|
+|urllib3|1.26.5|18|2.8.0|
+|jinja2|2.11.2|10|3.1.6|
 | | | | |
 
 ### 4C. Revisión manual
 
 Problema de seguridad que las herramientas NO reportaron, dónde está, por qué es un riesgo y cómo lo corrigieron:
+# Hallazgo 1: Path Traversal (Navegación de Directorios) en reportes.py
+Ubicación: exportar_respaldo(nombre_archivo)
+
+Descripción del problema: La función concatena nombre_archivo directamente en la ruta de destino (respaldos/ + nombre_archivo). Si un usuario ingresa una secuencia con salto de directorio como ../../etc/cron.d/malicioso o ../config.py, la aplicación escribirá o sobrescribirá archivos fuera del directorio respaldos/.
+
+Riesgo para BiblioTech: Permite la modificación o sobrescritura arbitraria de archivos críticos del servidor o del sistema operativo.
+
+Por qué Bandit no lo detectó: Bandit evalúa la seguridad de funciones concretas (como os.system), pero no valida si las cadenas pasadas como argumento a funciones estándar del sistema de archivos (shutil.copy) provienen de entradas no sanitizadas.
+
+# Hallazgo 2: Hashing de Contraseñas sin Sal (Salt) en usuarios.py
+Ubicación: _hash_clave(clave)
+
+Descripción del problema: La función aplica hashlib.sha256() directamente sobre la contraseña limpia sin incluir un prefijo/sufijo aleatorio o secreto (salt). Dos usuarios con la misma clave generarán exactamente el mismo hash en la base de datos.
+
+Riesgo para BiblioTech: Expone las credenciales a ataques por tablas precomputadas (Rainbow Tables) o ataques de diccionario inverso. Si se filtra la base de datos, un atacante puede averiguar las contraseñas originales de forma masiva.
+
+Por qué Bandit no lo detectó: Bandit valida que el algoritmo utilizado no sea considerado débil (flagay MD5 o SHA1), pero no analiza la arquitectura lógica del hashing ni la presencia de mecanismos de salado (salting).
 
 ## Parte 5. Pruebas de carga y estrés
 
@@ -458,9 +477,10 @@ Criterio de aceptación: con 30 usuarios simultáneos, el 95% de las búsquedas 
 
 | Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
 |---:|---:|---:|---:|:---:|
-| 10 | | | | |
-| 30 | | | | |
-| 60 | | | | |
+| 10       |  49         |164       | 0        | si cumple|
+| 30       |  49         |613       |0         | no cumple
+| 60       |  49         |1227      |0         | no cumple
+
 
 ### 5B. Diagnóstico y corrección
 
@@ -468,16 +488,21 @@ Criterio de aceptación: con 30 usuarios simultáneos, el 95% de las búsquedas 
 
 | Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
 |---:|---:|---:|---:|:---:|
-| 30 (después de corregir) | | | | |
+| 30       | 49           |614       |     0       | No cumple |
+
+R:  Se usa numero_visita y no visitas porque, cuando se arma la respuesta, otro hilo pudo haber cambiado visitas. La variable local guarda el número correcto de esta petición.
+    pese a la correccion del codigo, la prueba  sigue fallando ya que no se cumple por el tiempo de la consulta, que es demasiado corto para que se pueda saturar el servidor.
+    esto por seguir la REGLA DEL EXAMEN: no se permite modificar CAPACIDAD, TIEMPO_CONSULTA ni ESPERA_MAXIMA. estipulada en servidor.py
 
 ### 5C. Prueba de estrés
 
 | Usuarios | Peticiones/s | p95 (ms) | Errores (%) | ¿Cumple? |
-|---:|---:|---:|---:|:---:|
-| 100 | | | | |
-| 300 | | | | |
-| 500 | | | | |
-| 10 (después del estrés) | | | | |
+
+| 100      |     76      |  1310      |  359        | no cumple|
+| 300      |     237     |  1311      | 2386        | no cumple
+| 500      |     372     |  1315      | 4388        | no cumple 
+| 
+R: como resultado las pruebas por 100,300 y 500 usuario no cumple los requisitos debido a que pese que se corrigio el codigo, el examen tiene reglas de no modificar CAPACIDAD, TIEMPO_CONSULTA ni ESPERA_MAXIMA esto sumado a que el tiempo de la consulta  es demasiado corto para que se pueda saturar el servidor.
 
 Punto de quiebre, cómo falla el sistema (lentitud o errores 503) y si se recupera:
 

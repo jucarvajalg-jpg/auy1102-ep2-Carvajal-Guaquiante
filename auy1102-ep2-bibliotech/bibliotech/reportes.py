@@ -1,6 +1,7 @@
 """Reportes para la jefatura de la biblioteca."""
 
 import json
+import os
 import shutil
 
 
@@ -9,13 +10,18 @@ def calcular_indicador(formula, datos):
 
     Ejemplo: calcular_indicador("prestamos / socios", {"prestamos": 120, "socios": 40}) -> 3.0
     """
-    # Restringimos los builtins a None para evitar ejecución de código arbitrario
     return eval(formula, {"__builtins__": None}, datos)  # nosec B307
 
 
 def exportar_respaldo(nombre_archivo):
-    """Copia la base de datos a la carpeta de respaldos de forma segura."""
-    shutil.copy("biblioteca.db", f"respaldos/{nombre_archivo}")
+    """Copia la base de datos a la carpeta de respaldos sanitizando el nombre de archivo."""
+    # os.path.basename elimina secuencias como ../ para prevenir Path Traversal
+    nombre_seguro = os.path.basename(nombre_archivo)
+    if not nombre_seguro:
+        raise ValueError("Nombre de archivo inválido")
+
+    destino = os.path.join("respaldos", nombre_seguro)
+    shutil.copy("biblioteca.db", destino)
 
 
 def leer_configuracion(ruta):
