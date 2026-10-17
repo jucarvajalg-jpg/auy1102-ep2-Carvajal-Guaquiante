@@ -65,5 +65,10 @@ def autenticar(conexion, rut, clave):
 
 
 def generar_token_recuperacion():
-    """Genera un token aleatorio seguro criptográficamente."""
+    """Genera un token aleatorio seguro criptográficamente para recuperación."""
+    return secrets.token_hex(16)
+
+
+def generar_token_sesion():
+    """Genera un token aleatorio seguro criptográficamente para la sesión."""
     return secrets.token_hex(16)
