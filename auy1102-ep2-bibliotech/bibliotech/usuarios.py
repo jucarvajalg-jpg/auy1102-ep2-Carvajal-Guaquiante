@@ -2,6 +2,7 @@
 
 import hashlib
 import secrets
+import sqlite3
 
 SALT_SISTEMA = "BiblioTech_Seguridad_2026_SecureSalt"
 
@@ -12,8 +13,15 @@ def _hash_clave(clave):
     return hashlib.sha256(clave_con_salt.encode()).hexdigest()
 
 
+def conectar(ruta=":memory:"):
+    """Crea y retorna una conexión a la base de datos de SQLite."""
+    conexion = sqlite3.connect(ruta)
+    conexion.row_factory = sqlite3.Row
+    return conexion
+
+
 def registrar_usuario(conexion, rut, nombre, clave, tipo):
-    """Registra un usuario nuevo guardando su clave como hash seguro con sal."""
+    """Registra un usuario nuevo guardando su clave como hash seguro."""
     consulta = "INSERT INTO usuarios VALUES (?, ?, ?, ?)"
     conexion.execute(
         consulta,
@@ -27,8 +35,13 @@ def obtener_usuario(conexion, rut):
     return conexion.execute(consulta, (rut,)).fetchone()
 
 
+def buscar_usuario(conexion, rut):
+    """Busca un usuario por su RUT (alias/compatible con obtener_usuario)."""
+    return obtener_usuario(conexion, rut)
+
+
 def autenticar(conexion, rut, clave):
-    """Autentica a un usuario verificando su RUT y contraseña de forma segura."""
+    """Autentica a un usuario verificando su RUT y contraseña."""
     consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = ? AND clave = ?"
     return conexion.execute(consulta, (rut, _hash_clave(clave))).fetchone()
 
