@@ -39,12 +39,18 @@ def crear_tabla_usuarios(conexion):
 
 
 def registrar_usuario(conexion, rut, nombre, clave, tipo="estudiante"):
-    """Registra un usuario nuevo guardando su clave como hash seguro."""
-    consulta = "INSERT INTO usuarios VALUES (?, ?, ?, ?)"
+    """Registra un usuario nuevo guardando su clave como hash."""
+    crear_tabla(conexion)
+
+    consulta = """
+        INSERT INTO usuarios (rut, nombre, clave, tipo)
+        VALUES (?, ?, ?, ?)
+    """
     conexion.execute(
         consulta,
         (rut, nombre, _hash_clave(clave), tipo)
     )
+    conexion.commit()
 
 
 def obtener_usuario(conexion, rut):
