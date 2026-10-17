@@ -20,6 +20,24 @@ def conectar(ruta=":memory:"):
     return conexion
 
 
+def crear_tabla_usuarios(conexion):
+    """Crea la tabla de usuarios en la base de datos si no existe."""
+    conexion.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            rut TEXT PRIMARY KEY,
+            nombre TEXT NOT NULL,
+            clave TEXT NOT NULL,
+            tipo TEXT NOT NULL
+        )
+    """)
+    conexion.commit()
+
+
+def crear_tabla(conexion):
+    """Alias compatible para la creación de tablas."""
+    crear_tabla_usuarios(conexion)
+
+
 def registrar_usuario(conexion, rut, nombre, clave, tipo):
     """Registra un usuario nuevo guardando su clave como hash seguro."""
     consulta = "INSERT INTO usuarios VALUES (?, ?, ?, ?)"
@@ -36,7 +54,7 @@ def obtener_usuario(conexion, rut):
 
 
 def buscar_usuario(conexion, rut):
-    """Busca un usuario por su RUT (alias/compatible con obtener_usuario)."""
+    """Busca un usuario por su RUT."""
     return obtener_usuario(conexion, rut)
 
 
