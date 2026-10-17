@@ -22,7 +22,7 @@ def _hash_clave(clave):
 
 def registrar_usuario(conexion, rut, nombre, clave, tipo="estudiante"):
     """Registra un usuario nuevo guardando su clave como hash."""
-    consulta = f"INSERT INTO usuarios VALUES ('{rut}', '{nombre}', '{_hash_clave(clave)}', '{tipo}')"
+    consulta = f"INSERT INTO usuarios VALUES ('{rut}', '{nombre}','{_hash_clave(clave)}', '{tipo}')"
     conexion.execute(consulta)
     conexion.commit()
 

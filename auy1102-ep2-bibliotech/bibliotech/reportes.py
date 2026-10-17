@@ -1,7 +1,6 @@
 """Reportes para la jefatura de la biblioteca."""
 import os
 import json
-import sys
 
 
 def calcular_indicador(formula, datos):
@@ -22,7 +21,6 @@ def leer_configuracion(ruta):
     try:
         with open(ruta) as archivo:
             configuracion = json.load(archivo)
-            total = len(configuracion)
         return configuracion
-    except:
+    except Exception:
         return {}

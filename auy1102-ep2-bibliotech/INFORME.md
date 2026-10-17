@@ -392,10 +392,17 @@ tests/test_devolucion.py::test_tipo_usuario_invalido_lanza_value_error PASSED   
 ## Parte 3. Análisis estático (Flake8)
 
 | Código | Archivo:línea | Qué significa | Cómo lo corrigieron |
-|---|---|---|---|
-| | | | |
+|E501|.\bibliotech\prestamos.py:65|La línea excede el límite máximo permitido de caracteres|Divide la línea o la cadena de texto en varias líneas usando paréntesis.|
+|W292|.\bibliotech\prestamos.py:68|El archivo finaliza directamente en la última línea de código sin una línea vacía al final|Ve al final de ambos archivos, presiona la tecla Enter para agregar un salto de línea en blanco y guarda el archivo.|
+|F401|.\bibliotech\reportes.py:4|Se importó la librería sys, pero no se utiliza en ninguna parte del código.|Borra la línea import sys (o remueve sys si está dentro de una importación múltiple).|
+|F841|.\bibliotech\reportes.py:25|Se definió la variable total, pero nunca se lee, retorna o utiliza en el resto de la función.|Elimina la variable si no es necesaria, o utiliza su valor más adelante (por ejemplo, en un return total).|
+|E722|.\bibliotech\reportes.py:27|e utilizó un bloque except: sin especificar la clase de error a capturar|Reemplaza except: especificando el tipo de excepción genérica Exception o una específica (como ValueError o KeyError).|
+|W293|.\tests\test_devolucion.py:45|La línea 45 de test_devolucion.py parece estar vacía, pero contiene espacios o sangría invisibles|Ve a la línea 45 de tests\test_devolucion.py, borra todos los espacios ocultos en esa línea dejándola totalmente limpia|
+|W292|.\tests\test_devolucion.py:44|El archivo termina directamente en la línea 45 sin incluir un salto de línea final al final del archivo|Ve al final de la línea 45, presiona la tecla Enter para generar una línea en blanco extra (línea 46) y guarda el archivo.|
+
 
 Resultado final de `python -m flake8 --count`:
+No entrega ningun error 
 
 ## Parte 4. Análisis de seguridad
 

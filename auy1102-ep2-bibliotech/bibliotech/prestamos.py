@@ -62,4 +62,7 @@ def resumen_prestamo(titulo, dias, tipo_usuario="estudiante"):
     fecha_limite = hoy + timedelta(days=dias)
     if tipo_usuario is None:
         tipo_usuario = "estudiante"
-    return f"Libro: {titulo} | Usuario: {tipo_usuario} | Devolver antes del: {fecha_limite.isoformat()}"
+    return (
+        f"Libro: {titulo} | Usuario: {tipo_usuario} | "
+        f"Devolver antes del: {fecha_limite.isoformat()}"
+        )
