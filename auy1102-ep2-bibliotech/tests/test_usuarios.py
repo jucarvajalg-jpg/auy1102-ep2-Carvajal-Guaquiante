@@ -3,9 +3,14 @@
 Estas pruebas deben SEGUIR PASANDO después de corregir las vulnerabilidades
 de la Parte 4 (son sus pruebas de regresión).
 """
-from bibliotech.usuarios import (autenticar, buscar_usuario, conectar,
-                                 generar_token_sesion, registrar_usuario)
-
+from bibliotech.usuarios import (
+    autenticar,
+    buscar_usuario,
+    conectar,
+    generar_token_sesion,
+    registrar_usuario,
+    obtener_usuario,
+)
 
 def _base_con_un_usuario():
     conexion = conectar()
