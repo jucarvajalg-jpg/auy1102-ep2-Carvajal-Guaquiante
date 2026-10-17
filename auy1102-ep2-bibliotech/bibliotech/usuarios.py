@@ -7,7 +7,7 @@ SALT_SISTEMA = "BiblioTech_Seguridad_2026_SecureSalt"
 
 
 def _hash_clave(clave):
-    """Genera un hash SHA-256 con sal (salt) para prevenir ataques por tablas arcoíris."""
+    """Genera un hash SHA-256 seguro con sal para la contraseña."""
     clave_con_salt = f"{SALT_SISTEMA}:{clave}"
     return hashlib.sha256(clave_con_salt.encode()).hexdigest()
 
@@ -25,6 +25,12 @@ def obtener_usuario(conexion, rut):
     """Devuelve (rut, nombre, tipo) del usuario, o None si no existe."""
     consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = ?"
     return conexion.execute(consulta, (rut,)).fetchone()
+
+
+def autenticar(conexion, rut, clave):
+    """Autentica a un usuario verificando su RUT y contraseña de forma segura."""
+    consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = ? AND clave = ?"
+    return conexion.execute(consulta, (rut, _hash_clave(clave))).fetchone()
 
 
 def generar_token_recuperacion():
