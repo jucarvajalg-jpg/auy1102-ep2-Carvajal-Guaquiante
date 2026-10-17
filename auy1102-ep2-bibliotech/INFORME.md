@@ -409,10 +409,36 @@ No entrega ningun error
 ### 4A. Bandit
 
 | ID | Severidad / Confianza | Archivo:línea | Riesgo concreto en BiblioTech | Corrección aplicada |
-|---|---|---|---|---|
-| | | | | |
+|B701|alta / alta|bibliotech\notificaciones.py:12:14|Al deshabilitar el escape automático en plantillas Jinja2, si los nombres de usuarios o títulos de libros contienen código HTML o scripts maliciosos, podrían ejecutarse al renderizar el mensaje|autoescape=select_autoescape() al instanciar el entorno de Jinja2.|
+
+|B113|media / baja|bibliotech\notificaciones.py:17:16|La llamada HTTP no define un tiempo límite de espera. Si el servicio del webhook no responde, la aplicación puede quedar bloqueada indefinidamente, provocando una denegación de servicio (DoS).|Se agregó el argumento timeout=5 a la petición requests.post().|
+
+|B307|media / alta|bibliotech\reportes.py:11:11|El uso de eval() permite la ejecución arbitraria de código Python si la fórmula o los datos son manipulados por un usuario malintencionado.|Se reemplazó la llamada a eval() utilizando ast.literal_eval para evaluaciones seguras de estructuras simples o parsing numérico controlado.|
+
+|B605|alta / alta|bibliotech\reportes.py:16:4|Ejecutar comandos del sistema operativo mediante os.system() abre la puerta a inyecciones de comandos si nombre_archivo contiene caracteres especiales (como ; o &&), permitiendo que un atacante tome control del servidor.|Se reemplazó el comando del sistema operativo por la librería nativa de Python shutil.copy().|
+
+|B324|alta / alta|bibliotech\usuarios.py:20:11|MD5 es un algoritmo de hashing obsoleto y vulnerable a colisiones y ataques de tablas arcoíris, lo que compromete la confidencialidad de las contraseñas guardadas.|Se reemplazó el algoritmo por hashlib.sha256().|
+
+|B608|media / baja|bibliotech\usuarios.py:25:17|Concatenar cadenas directamente dentro de una sentencia SQL permite inyección SQL, exponiendo la base de datos a modificaciones no autorizadas o borrado masivo. |Se modificó la consulta para utilizar parámetros formateados seguros (?).|
+
+|B608|media / baja|bibliotech\usuarios.py:32:15|Concatenar la variable rut en la consulta SELECT permite inyección SQL, facilitando la evasión de autenticación o la extracción ilegítima de datos de usuarios.|Se parametrizó la consulta sustituyendo la concatenación por la tupla de argumentos (rut,).|
+
+|B311|baja / alta|bibliotech\usuarios.py:49:19|La librería estándar random es pseudoaleatoria y predecible, lo que no la hace apta para generar tokens de seguridad, identificadores o contraseñas temporales.|Se reemplazó el módulo random por secrets, diseñado específicamente para generación aleatoria criptográficamente segura.||
 
 Pruebas de seguridad agregadas (nombre y qué demuestran):
+
+# test_sql_injection_en_obtener_usuario:
+
+En el código original: La consulta concatenaba directamente el string ("SELECT ... WHERE rut = '" + rut + "'"). Al buscar ' OR '1'='1, la consulta ejecutada terminaba siendo SELECT ... WHERE rut = '' OR '1'='1', devolviendo siempre al primer usuario registrado en la base de datos (bypass de autenticación/búsqueda).
+
+Con la corrección: Al usar parámetros ?, SQLite busca literalmente el texto ' OR '1'='1 dentro de la columna RUT y devuelve None al no encontrarlo.
+
+# test_registrar_usuario_con_comilla_simple_en_nombre:
+
+En el código original: Concatenar 'Bernardo O'Higgins' generaba un error de sintaxis SQL en la cadena (INSERT INTO usuarios VALUES (..., 'Bernardo O'Higgins', ...)), ya que la comilla de "O'Higgins" cerraba el string prematuramente provocando un crash (sqlite3.OperationalError).
+
+Con la corrección: La consulta parametrizada escapa el carácter especial de manera transparente y permite guardar nombres con apóstrofes o comillas sin fallar.
+
 
 ### 4B. pip-audit
 
