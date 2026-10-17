@@ -65,10 +65,17 @@ def buscar_usuario(conexion, rut):
 
 
 def autenticar(conexion, rut, clave):
-    """Autentica a un usuario verificando su RUT y contraseña."""
-    consulta = "SELECT rut, nombre, tipo FROM usuarios WHERE rut = ? AND clave = ?"
-    return conexion.execute(consulta, (rut, _hash_clave(clave))).fetchone()
+    """Autentica al usuario y devuelve True o False."""
+    consulta = """
+        SELECT 1 FROM usuarios
+        WHERE rut = ? AND clave = ?
+    """
+    resultado = conexion.execute(
+        consulta,
+        (rut, _hash_clave(clave))
+    ).fetchone()
 
+    return resultado is not None
 
 def generar_token_recuperacion():
     """Genera un token aleatorio seguro para recuperación."""
